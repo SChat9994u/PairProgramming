@@ -151,12 +151,15 @@ Provide a brief analysis of what changed and its potential impact.
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=200,
-                temperature=0.7
+                temperature=0.7,
+                timeout=30
             )
             
             return response.choices[0].message.content
         except Exception as e:
-            return f"Error analyzing changes: {e}"
+            # Fallback: Return a simple analysis
+            print(f"   ⚠️  GPT analysis failed: {type(e).__name__}, using fallback")
+            return f"Repository has {changes.get('new_commits', 0)} new commit(s). Changes detected in {changes.get('repository', 'repository')}."
     
     def check_and_report(self) -> None:
         """Check for changes and report to parent agent"""

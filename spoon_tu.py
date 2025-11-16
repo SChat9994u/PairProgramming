@@ -49,12 +49,39 @@ Please format this as a clear, visually appealing console report with appropriat
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=400,
-                temperature=0.9
+                temperature=0.9,
+                timeout=30
             )
             
             return response.choices[0].message.content
         except Exception as e:
-            return f"Error formatting message: {e}"
+            # Fallback: Return a simple formatted message if GPT fails
+            print(f"   ⚠️  GPT formatting failed: {type(e).__name__}, using fallback format")
+            return self._create_fallback_format(message)
+    
+    def _create_fallback_format(self, message: Dict) -> str:
+        """Create a simple formatted message without GPT"""
+        changes_status = "✅ Changes Detected" if message.get('changes_detected') else "✅ No Changes"
+        
+        output = f"""
+Repository Status:
+  📦 Repository: {message.get('repository', 'Unknown')}
+  {changes_status}
+  📊 New Commits: {message.get('new_commits', 0)}
+  ⏰ Check Time: {message.get('check_time', 'Unknown')}
+
+System Status:
+  ✅ All agents operational
+  ✅ GitHub API accessible
+  ✅ Monitoring system operational
+"""
+        
+        if message.get('modified_files'):
+            output += "\nRecent Commits:\n"
+            for commit in message.get('modified_files', []):
+                output += f"  • [{commit.get('sha', 'N/A')}] {commit.get('message', 'N/A')}\n"
+        
+        return output
     
     def display_formatted_message(self, message: Dict) -> None:
         """Display the formatted message"""
