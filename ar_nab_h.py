@@ -20,8 +20,8 @@ class ArNabH:
         self.parent_agent = parent_agent
         
         # GitHub repository configuration
-        self.repo_owner = "torvalds"
-        self.repo_name = "linux"
+        self.repo_owner = "SChat9994u"
+        self.repo_name = "PairProgramming"
         self.api_base_url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}"
         
         # Baseline tracking
