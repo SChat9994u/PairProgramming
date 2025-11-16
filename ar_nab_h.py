@@ -7,6 +7,8 @@ import threading
 import time
 import requests
 import hashlib
+import json
+import os
 from datetime import datetime
 from typing import Dict, List, Optional
 from openai import OpenAI
@@ -28,6 +30,10 @@ class ArNabH:
         self.baseline_hash: Optional[str] = None
         self.baseline_commits: List[Dict] = []
         self.last_check_time = None
+        self.baseline_file = "baseline.json"
+        
+        # Load existing baseline if it exists
+        self._load_baseline()
         
         # Configuration
         self.check_interval = 10  # seconds
@@ -36,6 +42,30 @@ class ArNabH:
         print(f"\n🔍 {datetime.now().strftime('%H:%M:%S')} - Child Agent 'Ar-Nab-h' initialized")
         print(f"   Repository: {self.repo_owner}/{self.repo_name}")
         print(f"   Check Interval: {self.check_interval} seconds")
+    
+    def _load_baseline(self):
+        """Load baseline from file if it exists"""
+        if os.path.exists(self.baseline_file):
+            try:
+                with open(self.baseline_file, 'r') as f:
+                    data = json.load(f)
+                    self.baseline_hash = data.get('hash')
+                    self.baseline_commits = data.get('commits', [])
+                    print(f"   ✅ Baseline loaded from {self.baseline_file}")
+            except Exception as e:
+                print(f"   ⚠️ Failed to load baseline: {e}")
+    
+    def _save_baseline(self):
+        """Save current baseline to file"""
+        try:
+            with open(self.baseline_file, 'w') as f:
+                json.dump({
+                    'hash': self.baseline_hash,
+                    'commits': self.baseline_commits,
+                    'timestamp': datetime.now().isoformat()
+                }, f, indent=2)
+        except Exception as e:
+            print(f"⚠️ Failed to save baseline: {e}")
     
     def get_repo_data(self) -> Dict:
         """Fetch repository data from GitHub API"""
@@ -78,6 +108,8 @@ class ArNabH:
         self.baseline_commits = commits
         self.last_check_time = datetime.now()
         
+        # Save baseline to file
+        self._save_baseline()
         print(f"✅ Baseline created: {self.baseline_hash[:16]}...")
         return True
     

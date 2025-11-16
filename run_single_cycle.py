@@ -44,9 +44,12 @@ def run_single_cycle():
         print("🎯 AGENT SYSTEM READY - STARTING SINGLE CYCLE")
         print("=" * 80)
         
-        # Create baseline
-        print("\n📊 Creating baseline snapshot...")
-        ar_nab_h.create_baseline()
+        # Create baseline if it doesn't exist
+        print("\n📊 Checking baseline...")
+        if not os.path.exists('baseline.json'):
+            ar_nab_h.create_baseline()
+        else:
+            print("✅ Baseline already exists, skipping creation")
         
         # First monitoring check
         print(f"\n🔍 Performing GitHub API check...")
