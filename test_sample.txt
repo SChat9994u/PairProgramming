@@ -1,0 +1,7 @@
+Test Sample File
+================
+
+This is a sample file created to test the change detection system.
+Created on November 19, 2025.
+
+The program should detect this new file when it runs the next time.
