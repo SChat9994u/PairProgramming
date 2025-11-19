@@ -1,0 +1,7 @@
+Sample Change Detection File
+=============================
+
+This file demonstrates the change detection capability.
+Created on November 19, 2025.
+
+The multi-agent system should detect this new file in the next run.
